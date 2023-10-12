@@ -6,3 +6,6 @@ temp/
 
 #ignore virtual enviroments 
 .env/
+
+#ignore ALL files notebooks
+*.ipynb

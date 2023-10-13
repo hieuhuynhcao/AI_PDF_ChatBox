@@ -11,7 +11,7 @@ from langchain.vectorstores import Chroma
 from langchain.text_splitter import SpacyTextSplitter
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain, LLMChain
-from langchain.prompts import AIMessagePromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, ChatPromptTemplate
+from langchain.prompts import AIMessagePromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, ChatPromptTemplate, PromptTemplate
 import streamlit as st
 
 import spacy
@@ -19,12 +19,11 @@ nlp = spacy.load("en_core_web_trf", disable=["tagger", "ner", "lemmatizer", "mor
 
 OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
 llm = ChatOpenAI(model_name = "gpt-4",
-                temperature = 0.5,
+                temperature = 0.3,
                 openai_api_key = OPENAI_API_KEY)
-#Load docs
-def get_docs(filename, mem_area):
-    docs = fitz.open(filename, 
-                     stream = mem_area, 
+#Load docs: not use
+def get_docs(filename):
+    docs = fitz.open(filename,  
                      filetype = "pdf")
     return docs
 
@@ -44,7 +43,7 @@ def store_docs_to_vectorstore(all_splits, embedding):
                                         )
     return vectorstore
 
-#Generate
+# Generate
 def generate_conversation_chain(vectorstore):
     memory = ConversationBufferMemory(memory_key='chat_history', 
                                       return_messages=True)
@@ -57,6 +56,8 @@ def generate_conversation_chain(vectorstore):
     ---
     Assistant:
     {context}
+    ---
+    Assitant: You are able to read both text and CSV type in the document.
     ---
     User: {question}
     ---

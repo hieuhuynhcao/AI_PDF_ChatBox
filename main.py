@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from langchain.embeddings import OpenAIEmbeddings
-from handle_docs_flow import *
+from process_flow import *
 from html_template import css
 import streamlit as st
 from langchain.vectorstores import Chroma
@@ -32,7 +32,7 @@ def main():
         if st.button("PROCESS"):
             with st.status("Processing"):
                 # get pdf text
-                docs = handle_docs_flow(pdf_docs)
+                docs = process_flow(pdf_docs)
                 st.write(docs)
 
                 #Split docs

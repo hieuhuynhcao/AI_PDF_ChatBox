@@ -1,4 +1,4 @@
-# ignore ALL .log files
+# ignore ALL .log, cache files
 *.log
 __pycache__/
 
@@ -10,3 +10,6 @@ temp/
 
 #ignore ALL files notebooks
 *.ipynb
+
+#ignore db folder
+chroma_db/

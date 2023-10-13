@@ -23,7 +23,9 @@ llm = ChatOpenAI(model_name = "gpt-4",
                 openai_api_key = OPENAI_API_KEY)
 #Load docs
 def get_docs(filename, mem_area):
-    docs = fitz.open(filename, stream=mem_area, filetype="pdf")
+    docs = fitz.open(filename, 
+                     stream = mem_area, 
+                     filetype = "pdf")
     return docs
 
 #Split docs
@@ -49,7 +51,7 @@ def generate_conversation_chain(vectorstore):
     system_template = """
     ---
     System: 
-    You are the Splecialist Business Analytics and you are reading all the information and answer user's question.
+    You are the Specialist Business Analytics and you are reading all the information and answer user's question.
     ---
     User: Read me the document
     ---
@@ -59,11 +61,11 @@ def generate_conversation_chain(vectorstore):
     User: {question}
     ---
     Assistant:
-    Give 3 examples questions related to user's questions that can query to vector store.
+    Give an example questions related to user's questions that can query to vector store.
     ---
-    Assistant:
+    User:
     Search from {context} to find the information related to the user's question.
-    Thanks to the selectively information from searching above, answer all examples questions above.
+    Thanks to the selectively information from searching above, answer the example question above.
     """
 
     messages = [

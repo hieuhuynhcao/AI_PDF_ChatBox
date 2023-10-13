@@ -2,9 +2,6 @@ import fitz  # import package PyMuPDF
 import numpy as np
 import pandas as pd
 
-import json
-import requests
-
 def get_docs(filename, mem_area):
     docs = fitz.open(filename, stream=mem_area, filetype="pdf")
     return docs
@@ -78,7 +75,11 @@ def json_to_dataframe(json_table):
             csv_row.append(cell['text'])
         csv_table.append(csv_row)
     
-    return pd.DataFrame(csv_table)
+    df = pd.DataFrame(csv_table)
+    df.columns = df.iloc[0]
+    df = df[1:]
+
+    return df
 
 def json_to_dataframe_for_one_page(page):
     list_table = []
@@ -97,7 +98,7 @@ def concat_tables_to_a_page_content(page, tables):
     for i, e in enumerate(page):
         try:
             if e == 'Add table here':
-                page[i] = next(table).to_json()
+                page[i] = next(table).to_csv()
             else:
                 continue
         except StopIteration:

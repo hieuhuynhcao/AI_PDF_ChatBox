@@ -10,16 +10,17 @@ from langchain.chains import RetrievalQA
 from langchain.vectorstores import Chroma
 from langchain.text_splitter import SpacyTextSplitter
 from langchain.memory import ConversationBufferMemory
-from langchain.chains import ConversationalRetrievalChain, LLMChain
-from langchain.prompts import AIMessagePromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, ChatPromptTemplate
+from langchain.chains import ConversationalRetrievalChain
+from langchain.prompts import ChatPromptTemplate
 import streamlit as st
 
 import spacy
-nlp = spacy.load("en_core_web_trf", disable=["tagger", "ner", "lemmatizer", "morphologizer", "attribute_ruler"])
+nlp = spacy.load("en_core_web_trf", 
+                 disable=["tagger", "ner", "lemmatizer", "morphologizer", "attribute_ruler"])
 
 OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
 llm = ChatOpenAI(model_name = "gpt-4",
-                temperature = 0.5,
+                temperature = 0.2,
                 openai_api_key = OPENAI_API_KEY)
 #Load docs
 def get_docs(filename, mem_area):
@@ -27,16 +28,17 @@ def get_docs(filename, mem_area):
     return docs
 
 #Split docs
-def split_docs(docs, chunk_size=3500):
+def split_docs(docs, metadata, chunk_size=3500):
     text_splitter = SpacyTextSplitter(pipeline='en_core_web_trf',
                                       separator='\n\n',
                                       chunk_size=chunk_size)
-    all_splits = text_splitter.create_documents([docs])
+    all_splits = text_splitter.create_documents([docs]
+                                                ,metadatas=metadata)
     return all_splits
 
 #Store to vectorstore
 def store_docs_to_vectorstore(all_splits, embedding):
-    vectorstore = Chroma.from_documents(documents = all_splits, 
+    vectorstore = Chroma.from_texts(texts = all_splits, 
                                         embedding = embedding,
                                         persist_directory = './chroma_db'
                                         )
@@ -48,37 +50,34 @@ def generate_conversation_chain(vectorstore):
                                       return_messages=True)
     system_template = """
     ---
-    System: 
-    You are the Splecialist Business Analytics and you are reading all the information and answer user's question.
+    System:
+    You are the Splecialist Business Analytics. You are reading all the information and answer user's question.
     ---
-    User: Read me the document
+    User: Read me the document and the whole metadata.
     ---
-    Assistant:
-    {context}
+    Assitant: 
+    Given the following conversation and a follow up question, rephrase the follow up question to be 3 standalone questions.
     ---
-    User: {question}
-    ---
-    Assistant:
-    Give 3 examples questions related to user's questions that can query to vector store.
-    ---
-    Assistant:
-    Search from {context} to find the information related to the user's question.
-    Thanks to the selectively information from searching above, answer all examples questions above.
+    Chat History:
+    {chat_history}
+    Follow Up Input: {question}
+    Standalone question:
+
     """
 
-    messages = [
-        SystemMessagePromptTemplate.from_template(system_template),
-        HumanMessagePromptTemplate.from_template("{question}")
-        ]
-    qa_prompt = ChatPromptTemplate.from_messages(messages)
+
+    qa_prompt = ChatPromptTemplate.from_template(system_template)
 
     conversation_chain = ConversationalRetrievalChain.from_llm(
-        llm=llm,
-        retriever=vectorstore.as_retriever(),
-        memory=memory,
-        combine_docs_chain_kwargs={"prompt": qa_prompt}
+            llm = ChatOpenAI(temperature = 0, 
+                            model = "gpt-4",
+                            max_tokens = 1000),
+            retriever = vectorstore.as_retriever(),
+            condense_question_llm = ChatOpenAI(temperature = 0, 
+                                               model = 'gpt-4'),
+            condense_question_prompt = qa_prompt,
+            memory = memory
     )
-
     return conversation_chain
 
 def handle_userinput(user_question):

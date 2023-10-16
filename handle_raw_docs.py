@@ -116,3 +116,15 @@ def transform_list_of_content_to_text(list_content):
     text = ' '.join(map(str, fllaten_list))                     #concat elements to string.
     text = text.replace('Add table here', '')                   #replace table position that API do not classify and generate value.
     return text
+
+#Add metadata
+def add_metadata_to_a_page_content(page):
+    metadata_string = page.metadata
+    
+    return '---Metadata---\n'\
+            + str(metadata_string)\
+            + '\n---Page content---\n'\
+            + page.page_content
+
+def add_meta_data_to_all_pages(all_splits):
+    return list(map(lambda page: add_metadata_to_a_page_content(page), all_splits))

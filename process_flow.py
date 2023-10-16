@@ -2,8 +2,8 @@ import os
 
 from dotenv import load_dotenv
 from langchain.embeddings import OpenAIEmbeddings
-from workflow_function import *
-from handle_raw_docs import *
+from chatbot_function import *
+from transform_raw_docs import *
 from handle_ocr_table_api import *
 from html_template import css
 import streamlit as st
@@ -14,7 +14,7 @@ API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZWM1Zjc2YmMtYTc5
 headers = {"Authorization": f"Bearer {API_KEY}"}
 url = "https://api.edenai.run/v2/ocr/ocr_tables_async"
 
-def handle_docs_flow(pdf_docs):
+def process_flow(pdf_docs):
     file_contents = pdf_docs.read()
     with fitz.open(stream = file_contents, filetype = "pdf") as raw_docs:
         pretty_raw_docs = generate_text_all_pages(raw_docs)

@@ -22,9 +22,10 @@ OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
 llm = ChatOpenAI(model_name = "gpt-4",
                 temperature = 0.2,
                 openai_api_key = OPENAI_API_KEY)
-#Load docs
-def get_docs(filename, mem_area):
-    docs = fitz.open(filename, stream=mem_area, filetype="pdf")
+#Load docs: not use
+def get_docs(filename):
+    docs = fitz.open(filename,  
+                     filetype = "pdf")
     return docs
 
 #Split docs
@@ -44,7 +45,7 @@ def store_docs_to_vectorstore(all_splits, embedding):
                                         )
     return vectorstore
 
-#Generate
+# Generate
 def generate_conversation_chain(vectorstore):
     memory = ConversationBufferMemory(memory_key='chat_history', 
                                       return_messages=True)

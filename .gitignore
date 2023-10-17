@@ -11,4 +11,5 @@ temp/
 #ignore ALL files notebooks
 *.ipynb
 
+#ignore database
 chrome_db/

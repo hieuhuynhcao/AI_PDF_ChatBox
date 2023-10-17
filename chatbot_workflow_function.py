@@ -14,10 +14,10 @@ import spacy
 nlp = spacy.load("en_core_web_trf", 
                  disable=["tagger", "ner", "lemmatizer", "morphologizer", "attribute_ruler"])
 
-OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
-llm = ChatOpenAI(model_name = "gpt-4",
-                temperature = 0.2,
-                openai_api_key = OPENAI_API_KEY)
+# OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
+# llm = ChatOpenAI(model_name = "gpt-4",
+#                 temperature = 0.2,
+#                 openai_api_key = OPENAI_API_KEY)
 #Load docs
 def get_docs(filename, mem_area):
     docs = fitz.open(filename, stream=mem_area, filetype="pdf")

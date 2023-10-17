@@ -2,8 +2,9 @@ import os
 import json
 
 from dotenv import load_dotenv
-from handle_docs_flow import *
+from transform_raw_docs import *
 from chatbot_workflow_function import *
+from get_final_extracted_text import *
 from html_template import css
 from langchain.embeddings import OpenAIEmbeddings
 import streamlit as st
@@ -69,13 +70,14 @@ def main():
 
         if st.button("PROCESS"):
             with st.status("Processing"):
-                # get pdf text
-                docs = process_flow(pdf_docs)
+                # get extracted text from pdf file
+                docs = get_extracted_text(pdf_docs)
 
-                #Split docs
+                #Split docs from extrated text
                 text_chunks = split_docs(docs, [metadata])
+
+                #Add metadata to each page of the docs
                 transformered_documents = add_meta_data_to_all_pages(text_chunks)
-                print(transformered_documents)
 
                 # create vector store
                 vectorstore = store_docs_to_vectorstore(transformered_documents, OpenAIEmbeddings())

@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from langchain.embeddings import OpenAIEmbeddings
-from workflow_function import *
+from chatbot_workflow_function import *
 from handle_raw_docs import *
 from handle_ocr_table_api import *
 from html_template import css

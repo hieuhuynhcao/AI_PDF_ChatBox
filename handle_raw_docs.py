@@ -97,7 +97,7 @@ def concat_tables_to_a_page_content(page, tables):
     for i, e in enumerate(page):
         try:
             if e == 'Add table here':
-                page[i] = next(table).to_json()
+                page[i] = next(table).to_csv()
             else:
                 continue
         except StopIteration:

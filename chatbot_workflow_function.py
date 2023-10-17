@@ -6,7 +6,6 @@ import os
 import fitz  # import package PyMuPDF
 from html_template import bot_template, user_template
 from langchain.chat_models import ChatOpenAI
-from langchain.chains import RetrievalQA
 from langchain.vectorstores import Chroma
 from langchain.text_splitter import SpacyTextSplitter
 from langchain.memory import ConversationBufferMemory
@@ -22,10 +21,9 @@ OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
 llm = ChatOpenAI(model_name = "gpt-4",
                 temperature = 0.2,
                 openai_api_key = OPENAI_API_KEY)
-#Load docs: not use
-def get_docs(filename):
-    docs = fitz.open(filename,  
-                     filetype = "pdf")
+#Load docs
+def get_docs(filename, mem_area):
+    docs = fitz.open(filename, stream=mem_area, filetype="pdf")
     return docs
 
 #Split docs
@@ -45,7 +43,7 @@ def store_docs_to_vectorstore(all_splits, embedding):
                                         )
     return vectorstore
 
-# Generate
+#Generate
 def generate_conversation_chain(vectorstore):
     memory = ConversationBufferMemory(memory_key='chat_history', 
                                       return_messages=True)
@@ -65,16 +63,14 @@ def generate_conversation_chain(vectorstore):
     Standalone question:
 
     """
-
-
     qa_prompt = ChatPromptTemplate.from_template(system_template)
 
     conversation_chain = ConversationalRetrievalChain.from_llm(
-            llm = ChatOpenAI(temperature = 0, 
+            llm = ChatOpenAI(temperature = 0.1, 
                             model = "gpt-4",
                             max_tokens = 1000),
             retriever = vectorstore.as_retriever(),
-            condense_question_llm = ChatOpenAI(temperature = 0, 
+            condense_question_llm = ChatOpenAI(temperature = 0.1, 
                                                model = 'gpt-4'),
             condense_question_prompt = qa_prompt,
             memory = memory
@@ -82,7 +78,8 @@ def generate_conversation_chain(vectorstore):
     return conversation_chain
 
 def handle_userinput(user_question):
-    response = st.session_state.conversation({'question': user_question})
+    question = user_question + ". Give me the metadata at the end of the answer."
+    response = st.session_state.conversation({'question': question})
     st.session_state.chat_history = response['chat_history']
 
     for i, message in enumerate(st.session_state.chat_history):

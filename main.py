@@ -1,10 +1,11 @@
 import os
+import json
 
 from dotenv import load_dotenv
 from handle_docs_flow import *
+from chatbot_workflow_function import *
 from html_template import css
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
 import streamlit as st
 import pandas as pd
 
@@ -28,18 +29,24 @@ def main():
     with st.sidebar:
         st.subheader("Your docs")
         pdf_docs = st.file_uploader(
-            "Upload your fucking files and click on 'PROCESS'", accept_multiple_files=False, type='pdf')
+            "Upload your fucking files and click on 'PROCESS'", 
+            accept_multiple_files=False, type='pdf')
+        
+        # User enters metadatas
         if "df" not in st.session_state:
             st.session_state.df = pd.DataFrame(columns=["Customer", 
                                                         "Project", 
                                                         "Document", 
                                                         "Version"])
-        st.subheader("Add Metadata")
-        ncol = st.session_state.df.shape[1]
-        rw = -1
+        with(st.subheader("Add Metadata")):                                            
+            ncol = st.session_state.df.shape[1]
+            rw = -1
 
-        metadata = 0
-        with st.form(key="add form", clear_on_submit = True):
+        # Initialize metadata in session state
+        if 'metadata' not in st.session_state:
+            st.session_state.metadata = None
+
+        with (st.form(key="add form", clear_on_submit = True)):
             cols = st.columns(ncol)
             rwdta = []
 
@@ -50,21 +57,25 @@ def main():
                 st.info("Metadata has been added")
                 st.session_state.df.loc[rw] = rwdta
 
-                st.dataframe(st.session_state.df.transpose())
-        
-                x = json.loads(st.session_state.df.transpose().to_json())
-                print(x)
-                metadata = x
-                
+                # Update the metadata variable in session state within the block
+                st.session_state.metadata = json.loads(st.session_state.df.transpose().to_json())
+
+        # Now you can use metadata outside of the with st.form block
+        if st.session_state.metadata is not None:
+            metadata = st.session_state.metadata['1']
+        else:
+            metadata = 'None'
+        st.write(metadata)
+
         if st.button("PROCESS"):
             with st.status("Processing"):
                 # get pdf text
                 docs = process_flow(pdf_docs)
-                st.write(docs)
 
                 #Split docs
-                text_chunks = split_docs(docs, metadata)
+                text_chunks = split_docs(docs, [metadata])
                 transformered_documents = add_meta_data_to_all_pages(text_chunks)
+                print(transformered_documents)
 
                 # create vector store
                 vectorstore = store_docs_to_vectorstore(transformered_documents, OpenAIEmbeddings())

@@ -2,7 +2,7 @@ from chatbot_workflow_function import *
 from transform_raw_docs import *
 from handle_ocr_table_api import *
 
-API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZWM1Zjc2YmMtYTc5Yy00MzM1LWFmMDYtMzk4YjlhYTUxNWYyIiwidHlwZSI6ImFwaV90b2tlbiJ9.JJ2S_2_UP4AN-Vqm6bbafltPnZBjJ-4wpi9_eN9HCPg'
+API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmJmZDE4NWUtYzk0Zi00MjBhLWE4NTUtODg1MDFjY2MxZTIxIiwidHlwZSI6ImFwaV90b2tlbiJ9.5x5zxatYCWo8EJfTkp6rzDYXAFOpDr-nUganZdbUIa4'
 
 headers = {"Authorization": f"Bearer {API_KEY}"}
 url = "https://api.edenai.run/v2/ocr/ocr_tables_async"

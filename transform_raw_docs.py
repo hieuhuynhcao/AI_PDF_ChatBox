@@ -120,10 +120,10 @@ def transform_list_of_content_to_text(list_content):
 
 #Add metadata
 def add_metadata_to_a_page_content(page):
-    metadata_string = 'Customer: ' + page.metadata['customer']\
-                    +'\nProject' + page.metadata['project']\
-                    +'\nDocument' + page.metadata['document']\
-                    +'\nVersion' + page.metadata['version']
+    metadata_string = 'Customer: ' + page.metadata['Customer']\
+                    +'\nProject: ' + page.metadata['Project']\
+                    +'\nDocument: ' + page.metadata['Document']\
+                    +'\nVersion: ' + page.metadata['Version']
     
     return '---Metadata---\n'\
             + metadata_string\

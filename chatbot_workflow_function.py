@@ -1,6 +1,3 @@
-from functools import reduce
-import json
-import operator
 import os
 
 import fitz  # import package PyMuPDF
@@ -55,13 +52,14 @@ def generate_conversation_chain(vectorstore):
     User: Read me the document and the whole metadata.
     ---
     Assitant: 
-    Given the following conversation and a follow up question, rephrase the follow up question to be 3 standalone questions.
+    Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
     ---
     Chat History:
     {chat_history}
-    Follow Up Input: {question}
+    Follow Up Input: {question}. Put the information about metadata at the end of the answer.
     Standalone question:
 
+    
     """
     qa_prompt = ChatPromptTemplate.from_template(system_template)
 
@@ -78,8 +76,7 @@ def generate_conversation_chain(vectorstore):
     return conversation_chain
 
 def handle_userinput(user_question):
-    question = user_question + ". Give me the metadata at the end of the answer."
-    response = st.session_state.conversation({'question': question})
+    response = st.session_state.conversation({'question': user_question})
     st.session_state.chat_history = response['chat_history']
 
     for i, message in enumerate(st.session_state.chat_history):

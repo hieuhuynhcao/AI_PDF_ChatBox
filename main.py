@@ -30,14 +30,15 @@ def main():
     with st.sidebar:
         st.subheader("Your docs")
         pdf_docs = st.file_uploader(
-            "Upload your fucking files and click on 'PROCESS'", 
-            accept_multiple_files=False, type='pdf')
+                "Upload your fucking files and click on 'PROCESS'",
+                accept_multiple_files = False,
+                type = 'pdf')
         
         # User enters metadatas
         if "df" not in st.session_state:
-            st.session_state.df = pd.DataFrame(columns=["Customer", 
-                                                        "Project", 
-                                                        "Document", 
+            st.session_state.df = pd.DataFrame(columns=["Customer",
+                                                        "Project",
+                                                        "Document",
                                                         "Version"])
         with(st.subheader("Add Metadata")):                                            
             ncol = st.session_state.df.shape[1]

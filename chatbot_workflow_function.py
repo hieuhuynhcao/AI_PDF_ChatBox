@@ -1,5 +1,3 @@
-import os
-
 import fitz  # import package PyMuPDF
 from html_template import bot_template, user_template
 from langchain.chat_models import ChatOpenAI

@@ -7,6 +7,7 @@ API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmJmZDE4NWUtYzk0
 headers = {"Authorization": f"Bearer {API_KEY}"}
 url = "https://api.edenai.run/v2/ocr/ocr_tables_async"
 
+# Extract only 1 pdf file!
 def get_extracted_text(pdf_docs):
     file_contents = pdf_docs.read()
     with fitz.open(stream = file_contents, filetype = "pdf") as raw_docs:

@@ -27,15 +27,15 @@ def split_docs(docs, metadata, chunk_size=3500):
                                       separator='\n\n',
                                       chunk_size=chunk_size)
     all_splits = text_splitter.create_documents([docs]
-                                                ,metadatas=metadata)
+                                                ,metadatas = [metadata])
     return all_splits
 
 #Store to vectorstore
 def store_docs_to_vectorstore(all_splits, embedding):
     vectorstore = Chroma.from_texts(texts = all_splits, 
-                                        embedding = embedding,
-                                        persist_directory = './chroma_db'
-                                        )
+                                    embedding = embedding,
+                                    persist_directory = './chroma_db'
+                                    )
     return vectorstore
 
 #Generate
@@ -47,7 +47,7 @@ def generate_conversation_chain(vectorstore):
     System:
     You are the Splecialist Business Analytics. You are reading all the information and answer user's question.
     ---
-    User: Read me the document and the whole metadata.
+    User: Read me all metadata and content in the document.
     ---
     Assitant: 
     Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
@@ -62,11 +62,11 @@ def generate_conversation_chain(vectorstore):
     qa_prompt = ChatPromptTemplate.from_template(system_template)
 
     conversation_chain = ConversationalRetrievalChain.from_llm(
-            llm = ChatOpenAI(temperature = 0.1, 
+            llm = ChatOpenAI(temperature = 0.4, 
                             model = "gpt-4",
                             max_tokens = 1000),
             retriever = vectorstore.as_retriever(),
-            condense_question_llm = ChatOpenAI(temperature = 0.1, 
+            condense_question_llm = ChatOpenAI(temperature = 0.4, 
                                                model = 'gpt-4'),
             condense_question_prompt = qa_prompt,
             memory = memory

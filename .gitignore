@@ -12,4 +12,4 @@ temp/
 *.ipynb
 
 #ignore database
-chrome_db/
+chroma_db/

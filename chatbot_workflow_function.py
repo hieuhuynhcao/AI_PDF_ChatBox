@@ -1,5 +1,6 @@
-import fitz  # import package PyMuPDF
 from html_template import bot_template, user_template
+
+import fitz  # import package PyMuPDF
 from langchain.chat_models import ChatOpenAI
 from langchain.vectorstores import Chroma
 from langchain.text_splitter import SpacyTextSplitter
@@ -22,10 +23,11 @@ def get_docs(filename, mem_area):
     return docs
 
 #Split docs
-def split_docs(docs, metadata, chunk_size=3500):
+def split_docs(docs, metadata, chunk_size=4000):
     text_splitter = SpacyTextSplitter(pipeline='en_core_web_trf',
                                       separator='\n\n',
-                                      chunk_size=chunk_size)
+                                      chunk_size=chunk_size
+                                      ,chunk_overlap=500)
     all_splits = text_splitter.create_documents([docs]
                                                 ,metadatas = [metadata])
     return all_splits
@@ -50,11 +52,11 @@ def generate_conversation_chain(vectorstore):
     User: Read me all metadata and content in the document.
     ---
     Assitant: 
-    Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
+    Given the following conversation and a follow up question, rephrase the follow up question to be 3 standalone questions.
     ---
     Chat History:
     {chat_history}
-    Follow Up Input: {question}. Put the information about metadata at the end of the answer.
+    Follow Up Input: {question}. After answering all question, put the information about metadata in the end.
     Standalone question:
 
     

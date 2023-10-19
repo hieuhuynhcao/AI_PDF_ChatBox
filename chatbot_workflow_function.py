@@ -6,7 +6,7 @@ from langchain.vectorstores import Chroma
 from langchain.text_splitter import SpacyTextSplitter
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
-from langchain.prompts import ChatPromptTemplate
+from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 import streamlit as st
 
 import spacy
@@ -44,34 +44,35 @@ def store_docs_to_vectorstore(all_splits, embedding):
 def generate_conversation_chain(vectorstore):
     memory = ConversationBufferMemory(memory_key='chat_history', 
                                       return_messages=True)
-    system_template = """
-    ---
-    System:
-    You are the Splecialist Business Analytics. You are reading all the information and answer user's question.
-    ---
-    User: Read me all metadata and content in the document.
-    ---
-    Assitant: 
-    Given the following conversation and a follow up question, rephrase the follow up question to be 3 standalone questions.
-    ---
-    Chat History:
-    {chat_history}
-    Follow Up Input: {question}. After answering all question, put the information about metadata in the end.
-    Standalone question:
+    system_template = """You are a Splecialist Business Analytics. End every answer with the pretty metadata. Use the following pieces of context to answer the users question. 
+        If you cannot find the answer from the pieces of context, just say that you don't know, don't try to make up an answer.
+        ---
+        {context}
+        ---
+        User: {question}
+        ---
+        Assitant:
+        Paraphrase the user's question
 
-    
-    """
-    qa_prompt = ChatPromptTemplate.from_template(system_template)
+        """
+    # qa_prompt = ChatPromptTemplate.from_template(system_template)
+
+    messages = [
+        SystemMessagePromptTemplate.from_template(system_template),
+        HumanMessagePromptTemplate.from_template("{question}")
+        ]
+    qa_prompt = ChatPromptTemplate.from_messages(messages)
 
     conversation_chain = ConversationalRetrievalChain.from_llm(
-            llm = ChatOpenAI(temperature = 0.4, 
-                            model = "gpt-4",
-                            max_tokens = 1000),
-            retriever = vectorstore.as_retriever(),
-            condense_question_llm = ChatOpenAI(temperature = 0.4, 
-                                               model = 'gpt-4'),
-            condense_question_prompt = qa_prompt,
-            memory = memory
+            llm = ChatOpenAI(temperature = 0.4
+                            ,model = "gpt-4"
+                            ,max_tokens = 1000)
+            ,retriever = vectorstore.as_retriever()
+            # condense_question_llm = ChatOpenAI(temperature = 0.4, 
+            #                                    model = 'gpt-4'),
+            #condense_question_prompt = qa_prompt,
+            ,combine_docs_chain_kwargs = {'prompt': qa_prompt}
+            ,memory = memory
     )
     return conversation_chain
 

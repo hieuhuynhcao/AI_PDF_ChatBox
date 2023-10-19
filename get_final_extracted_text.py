@@ -2,7 +2,7 @@ from chatbot_workflow_function import *
 from transform_raw_docs import *
 from handle_ocr_table_api import *
 
-API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmJmZDE4NWUtYzk0Zi00MjBhLWE4NTUtODg1MDFjY2MxZTIxIiwidHlwZSI6ImFwaV90b2tlbiJ9.5x5zxatYCWo8EJfTkp6rzDYXAFOpDr-nUganZdbUIa4'
+API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMGVlYzVlMGItODk5MS00NWQyLWEzMTItODY0ZmRiOTQyYzE1IiwidHlwZSI6ImFwaV90b2tlbiJ9.bhobWOHLKfyIl_BCrHA4yeSycb3qKu8unigUrLL2hp8'
 
 headers = {"Authorization": f"Bearer {API_KEY}"}
 url = "https://api.edenai.run/v2/ocr/ocr_tables_async"
@@ -25,9 +25,10 @@ def get_extracted_text(pdf_docs):
                             files = files, 
                             headers = headers)
     post_result = json.loads(response.text)
-
+    print(post_result)
     #Handle tables in docs
     public_id = post_result['public_id']
+
 
     job_result = get_job_result_ocr_tables_api(url, public_id, headers)
 

@@ -5,9 +5,10 @@ from html_template import css
 
 from dotenv import load_dotenv
 import json
-from langchain.embeddings import OpenAIEmbeddings
 import pandas as pd
 import streamlit as st
+
+from resources import vectorstore
 
 def _main_test():
     load_dotenv()
@@ -73,6 +74,9 @@ def _main_test():
             metadata = metadatas.get(f'metadata_{i}')
             list_metadata.append(metadata.get('1'))
 
+        # create conversation chain
+        st.session_state.conversation = generate_conversation_chain(vectorstore)    
+
         if st.button("PROCESS"):
             with st.status("Processing"):
                 # get extracted text from pdf file
@@ -86,10 +90,9 @@ def _main_test():
                 st.write(transformered_documents)
 
                 # create vector store
-                vectorstore = store_docs_to_vectorstore(transformered_documents, OpenAIEmbeddings())
+                store_docs_to_vectorstore(transformered_documents)
         
-                # create conversation chain
-                st.session_state.conversation = generate_conversation_chain(vectorstore)
+                
 
 def main():
     load_dotenv()

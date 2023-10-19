@@ -2,7 +2,7 @@ import json
 import requests
 import time
 
-API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmJmZDE4NWUtYzk0Zi00MjBhLWE4NTUtODg1MDFjY2MxZTIxIiwidHlwZSI6ImFwaV90b2tlbiJ9.5x5zxatYCWo8EJfTkp6rzDYXAFOpDr-nUganZdbUIa4'
+API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMGVlYzVlMGItODk5MS00NWQyLWEzMTItODY0ZmRiOTQyYzE1IiwidHlwZSI6ImFwaV90b2tlbiJ9.bhobWOHLKfyIl_BCrHA4yeSycb3qKu8unigUrLL2hp8'
 
 headers = {"Authorization": f"Bearer {API_KEY}"}
 url = "https://api.edenai.run/v2/ocr/ocr_tables_async"

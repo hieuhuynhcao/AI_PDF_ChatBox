@@ -98,7 +98,7 @@ def concat_tables_to_a_page_content(page, tables):
     for i, e in enumerate(page):
         try:
             if e == 'Add table here':
-                page[i] = next(table).to_csv(index=False)
+                page[i] = next(table).to_dict(orient='records')
             else:
                 continue
         except StopIteration:
@@ -120,9 +120,9 @@ def transform_list_of_content_to_text(list_content):
 
 #Add metadata
 def add_metadata_to_a_page_content(page):
-    metadata_string = 'Customer: ' + page.metadata['Customer'] + ', '\
-                    +'Project: ' + page.metadata['Project'] + ', '\
-                    +'Document: ' + page.metadata['Document'] + ', '\
+    metadata_string = 'Customer: ' + page.metadata['Customer'] + '\n'\
+                    +'Project: ' + page.metadata['Project'] + '\n'\
+                    +'Document: ' + page.metadata['Document'] + '\n'\
                     +'Version: ' + page.metadata['Version']
     
     return '---Metadata---\n'\

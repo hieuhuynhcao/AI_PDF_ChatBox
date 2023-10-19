@@ -2,21 +2,14 @@ from html_template import bot_template, user_template
 
 import fitz  # import package PyMuPDF
 from langchain.chat_models import ChatOpenAI
-from langchain.vectorstores import Chroma
 from langchain.text_splitter import SpacyTextSplitter
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 import streamlit as st
 
-import spacy
-nlp = spacy.load("en_core_web_trf", 
-                 disable=["tagger", "ner", "lemmatizer", "morphologizer", "attribute_ruler"])
+from resources import vectorstore, nlp
 
-# OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
-# llm = ChatOpenAI(model_name = "gpt-4",
-#                 temperature = 0.2,
-#                 openai_api_key = OPENAI_API_KEY)
 #Load docs
 def get_docs(filename, mem_area):
     docs = fitz.open(filename, stream=mem_area, filetype="pdf")
@@ -33,12 +26,8 @@ def split_docs(docs, metadata, chunk_size=4000):
     return all_splits
 
 #Store to vectorstore
-def store_docs_to_vectorstore(all_splits, embedding):
-    vectorstore = Chroma.from_texts(texts = all_splits, 
-                                    embedding = embedding,
-                                    persist_directory = './chroma_db'
-                                    )
-    return vectorstore
+def store_docs_to_vectorstore(all_splits):
+    vectorstore.add_texts(texts = all_splits)
 
 #Generate
 def generate_conversation_chain(vectorstore):
@@ -55,7 +44,6 @@ def generate_conversation_chain(vectorstore):
         Paraphrase the user's question
 
         """
-    # qa_prompt = ChatPromptTemplate.from_template(system_template)
 
     messages = [
         SystemMessagePromptTemplate.from_template(system_template),
@@ -73,6 +61,7 @@ def generate_conversation_chain(vectorstore):
             #condense_question_prompt = qa_prompt,
             ,combine_docs_chain_kwargs = {'prompt': qa_prompt}
             ,memory = memory
+            ,verbose=True
     )
     return conversation_chain
 
@@ -84,6 +73,7 @@ def handle_userinput(user_question):
         if i % 2 == 0:
             st.write(user_template.replace(
                 "{{MSG}}", message.content), unsafe_allow_html=True)
+            print(response)
         else:
             st.write(bot_template.replace(
                 "{{MSG}}", message.content), unsafe_allow_html=True)

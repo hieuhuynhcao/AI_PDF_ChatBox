@@ -13,3 +13,6 @@ temp/
 
 #ignore database
 chroma_db/
+
+#ignore text file
+*.txt

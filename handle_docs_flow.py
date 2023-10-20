@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from langchain.embeddings import OpenAIEmbeddings
 from chatbot_workflow_function import *
-from handle_raw_docs import *
+from transform_raw_docs import *
 from handle_ocr_table_api import *
 from html_template import css
 import streamlit as st
@@ -26,9 +26,9 @@ def process_flow(pdf_docs):
             "providers": 'amazon',
             'language':'en'}
     
-    response = requests.post(url, 
+    response = requests.post(url,
                             data = data,
-                            files = files, 
+                            files = files,
                             headers = headers)
     post_result = json.loads(response.text)
 

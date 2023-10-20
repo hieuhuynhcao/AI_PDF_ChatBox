@@ -1,6 +1,7 @@
 from transform_raw_docs import *
 from chatbot_workflow_function import *
 from get_final_extracted_text import *
+from word_loader import *
 from html_template import css
 
 from dotenv import load_dotenv
@@ -37,7 +38,7 @@ def _main_test():
         pdf_docs = st.file_uploader(
             "Upload your files and click on 'PROCESS'"
             ,accept_multiple_files = True
-            ,type = 'pdf'
+            ,type = 'docx'
         )
 
         if pdf_docs:
@@ -80,7 +81,7 @@ def _main_test():
         if st.button("PROCESS"):
             with st.status("Processing"):
                 # get extracted text from pdf file
-                list_docs = list(map(lambda doc: get_extracted_text(doc), pdf_docs))
+                list_docs = list(map(lambda doc: transform_text(doc), pdf_docs))
 
                 # Split docs from extrated text
                 text_chunks = flatten_comprehension( list(map(lambda doc, metadata: split_docs(doc, metadata), list_docs, list_metadata)) )

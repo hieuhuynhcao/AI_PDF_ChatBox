@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from langchain.embeddings import OpenAIEmbeddings
 from chatbot_workflow_function import *
 from transform_raw_docs import *
-from handle_ocr_table_api import *
+from _handle_ocr_table_api import *
 from html_template import css
 import streamlit as st
 from langchain.vectorstores import Chroma

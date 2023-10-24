@@ -63,6 +63,6 @@ def transform_text(filename):
                     continue
                 row_data = dict(zip(keys, text))
                 formatted_string = "\n".join([f"{key}: {value}" for key, value in row_data.items()])
-                list_content.append(f'---\n{formatted_string}')
+                list_content.append(f'---\n{formatted_string}\n')
 
     return '\n'.join(list_content)

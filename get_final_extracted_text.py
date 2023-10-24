@@ -1,6 +1,6 @@
 from chatbot_workflow_function import *
 from transform_raw_docs import *
-from handle_ocr_table_api import *
+from _handle_ocr_table_api import *
 
 API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMGVlYzVlMGItODk5MS00NWQyLWEzMTItODY0ZmRiOTQyYzE1IiwidHlwZSI6ImFwaV90b2tlbiJ9.bhobWOHLKfyIl_BCrHA4yeSycb3qKu8unigUrLL2hp8'
 

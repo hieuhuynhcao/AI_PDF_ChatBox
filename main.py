@@ -3,14 +3,14 @@ import json
 import pandas as pd
 import streamlit as st
 
-from chatbot_workflow_function import *
+from chatbot_workflow_function import split_docs_with_recursive, store_docs_to_vectorstore, generate_conversation_chain
 from html_template import css
 from get_final_extracted_text import *
-from resources import vectorstore
+from resources import load_vector_store
 from transform_raw_docs import *
 from word_loader import *
 
-
+import os
 
 def main():
     load_dotenv()
@@ -36,8 +36,12 @@ def main():
     
     # create conversation chain
     if user_question:
-        st.write(generate_conversation_chain(user_question, vectorstore))
-
+        if os.path.exists('faiss_store.pkl'):
+            vectorstore = load_vector_store()
+            st.write(generate_conversation_chain(user_question, vectorstore))
+        else:
+            st.warning("Please import file to process!!!")
+        
     # Slide bar
     with st.sidebar:
         st.header("Your docs")
@@ -90,14 +94,12 @@ def main():
 
                 # Split docs from extrated text
                 text_chunks = flatten_comprehension( list(map(lambda doc, metadata: split_docs_with_recursive(doc, metadata), list_docs, list_metadata)) )
-
                 # Add metadata to each page of the docs
                 transformered_documents = add_meta_data_to_all_pages(text_chunks)
                 st.write(transformered_documents)
 
-                # create vector store
+                # Store into vector store
                 store_docs_to_vectorstore(transformered_documents)
 
 if __name__ == "__main__":
-    # main()
     main()

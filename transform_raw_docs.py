@@ -1,10 +1,5 @@
-import fitz  # import package PyMuPDF
 import numpy as np
 import pandas as pd
-
-def get_docs(filename, mem_area):
-    docs = fitz.open(filename, stream=mem_area, filetype="pdf")
-    return docs
 
 def create_list_of_tables(page):
     list_table_bbox = []
@@ -125,7 +120,7 @@ def add_metadata_to_a_page_content(page):
                     +'Document: ' + page.metadata['Document'] + '\n'\
                     +'Version: ' + page.metadata['Version']
     
-    return '---Metadata---\n'\
+    return '\n\n---Metadata---\n'\
             + metadata_string\
             + '\n---Page content---\n'\
             + page.page_content

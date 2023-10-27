@@ -15,13 +15,13 @@ def _get_docs(filename, mem_area):
     return docs
 
 #Split docs
-def split_docs_with_recursive(docs,metadata, chunk_size=2000):
+def split_docs_with_recursive(docs,metadata, chunk_size=3500):
     custom_text_splitter = RecursiveCharacterTextSplitter(
         # Set custom chunk size
         chunk_size = chunk_size,
         chunk_overlap  = 0,
         length_function = len,
-        separators=['---']
+        separators = ['---']
     )
     all_splits = custom_text_splitter.create_documents([docs],
                                                        metadatas=[metadata])
@@ -90,24 +90,27 @@ def generate_conversation_chain(question, vectorstore):
     QUERY_PROMPT = PromptTemplate(
         input_variables=['question', 'context'],
         template="""
-        System: You are a Specialist Data Analytics.
+        System: Act as a specialized data analytics expert.
+        Leverage your expertise in data analytics and financial methodologies to conduct comprehensive document analysis and provide answers to user inquiries. 
+        You possess the ability to distill information from the documents and furnish responses that range from broad overviews to precise details. 
+        My initial request is to assist me in thoroughly exploring all crucial information within the realm of human knowledge
         ---
         User:
         {question}
         ---
-        Assitant: Use only the context to answer the user's question. Just answer the main point.
+        Assistant: Use only the context to answer the user's question. Just answer the main point.
         {context}
         
         ---
-        Assitant:
+        Assistant:
 
         
     """
     )
     conversation_chain = RetrievalQA.from_chain_type(
             llm = ChatOpenAI(temperature = 0
-                            ,model = "gpt-3.5-turbo"
-                            ,max_tokens = 1000)
+                            ,model = "gpt-4"
+                            ,max_tokens = 1200)
             ,retriever = vectorstore.as_retriever()
             ,chain_type_kwargs={ "prompt": QUERY_PROMPT }
             ,verbose=True
